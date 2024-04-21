@@ -1,0 +1,9 @@
+venv
+/project-test
+
+**/dist
+**/pyeam.egg-info
+**/build
+
+**/pyeam.egg-info
+**/__pycache__/
