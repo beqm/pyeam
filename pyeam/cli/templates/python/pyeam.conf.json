@@ -1,0 +1,22 @@
+{
+    "productName": "My App",
+    "version": "0.1.0",
+    "identifier": "my-app",
+    "icon": "",
+    "devTools": true,
+    "contextMenu": true,
+    "build": {
+        "beforeBuildCommand": "",
+        "beforeDevCommand": "",
+        "devUrl": "",
+        "distDir": ""
+    },
+    "window": {
+        "title": "My app",
+        "resizable": true,
+        "width": 800,
+        "height": 600,
+        "minWidth": 600,
+        "minHeight": 420
+    }
+}

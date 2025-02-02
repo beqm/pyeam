@@ -1,17 +1,20 @@
 [project]
+dependencies = [
+    "psutil (>=6.1.1,<7.0.0)",
+    "requests (>=2.32.3,<3.0.0)",
+    "pythonnet>=3.0.5",
+    "questionary (>=2.1.0,<3.0.0)",
+]
 name = "pyeam"
 version = "0.1.0"
 description = ""
 authors = [{ name = "beqm", email = "brenomartinsmb@gmail.com" }]
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = ["psutil (>=6.1.1,<7.0.0)", "requests (>=2.32.3,<3.0.0)"]
+requires-python = ">=3.12,<3.14"
 
-[tool.poetry.dependencies]
-python = ">=3.12.2,<3.14"
-pythonnet = "^3.0.5"
-requests = ">=2.32.3"
-psutil = ">=6.1.1"
+[tool.poetry.scripts]
+pyeam = "pyeam.cli:main"
+
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
