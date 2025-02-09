@@ -1,8 +1,9 @@
 [project]
 dependencies = [
+    "click (>=8.1.8)",
+    "pythonnet>=3.0.5",
     "psutil (>=6.1.1,<7.0.0)",
     "requests (>=2.32.3,<3.0.0)",
-    "pythonnet>=3.0.5",
     "questionary (>=2.1.0,<3.0.0)",
 ]
 name = "pyeam"
