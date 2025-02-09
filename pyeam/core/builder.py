@@ -16,15 +16,14 @@ import os
 import sys
 import psutil
 import requests
-import threading
 import subprocess
 from time import sleep
 from pyeam.tools import stdout
-from pyeam.core.ipc import IPC
 from pyeam.tools import stdout
 from pyeam.core import winforms
 from typing import Callable, List
 from pyeam.core.config import Config
+from pyeam.core.invoker import Invoker
 
 from System.Windows.Forms import Application
 from System.Threading import ApartmentState, Thread, ThreadStart
@@ -35,7 +34,6 @@ class PyeamClientError(Exception):
 
 
 class Builder:
-    ipc: IPC
     config: Config
     logger = logging.getLogger("pyeam")
 
@@ -58,10 +56,6 @@ class Builder:
         client_process = None
         
         try:
-            ipc_thread: threading.Thread = IPC._run()
-            ipc_thread.daemon = True
-            ipc_thread.start()
-
             client_process = Builder.wait_client()
 
             if not client_process:
@@ -82,18 +76,13 @@ class Builder:
             if client_process is not None:
                 Builder.kill_processes(client_process.pid)
 
-
-
     def invokers(self, invokers: List[Callable]):
         for invoker in invokers:
-            path = f"/api/invoke/{invoker.__name__}"
-            if path not in IPC.routes:
-                del IPC.routes[path]
-                continue
-
-            self.logger.info(f"Appending invoker {path}")
-            IPC._route(invoker.__name__, command=invoker, method="GET")
-
+            name = invoker.__name__
+            if Invoker.commands.get(name):
+                Invoker.commands[name].allowed = True
+                self.logger.info(f"Registering command: `{name}` ")
+                
         return Builder()
     
     @classmethod

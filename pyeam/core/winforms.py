@@ -47,6 +47,7 @@ class WinForms(Form):
         self.logger.info("WinForms process terminated")
 
 def initialize(config: Config):
+    """Starts the application"""
     logger = logging.getLogger("pyeam")
 
     form = WinForms(config)
@@ -55,6 +56,3 @@ def initialize(config: Config):
     app = Application
     logger.info("Application started")
     app.Run()
-
-    
-    
