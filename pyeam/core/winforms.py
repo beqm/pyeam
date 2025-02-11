@@ -5,13 +5,13 @@ from pyeam.core.config import Config
 
 from System import Func, Type
 from System.Drawing import Size, Icon
-from System.Windows.Forms import Form, Application, FormBorderStyle
+from System.Windows.Forms import Form, Application, FormBorderStyle, OpenFileDialog, DialogResult
 
 
 class WinForms(Form):
     logger = logging.getLogger("pyeam")
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, workers: int):
         super().__init__()
         self.uid = config.identifier
 
@@ -35,7 +35,7 @@ class WinForms(Form):
             self.FormBorderStyle = FormBorderStyle.FixedSingle
         self.logger.info(f"WinForms Window Resizable: {config.window.resizable}")
         
-        self.browser = core.Webview(self, config)
+        self.browser = core.Webview(self, config, workers)
         self.FormClosed += self.on_exit
 
     def on_exit(self, *_):
@@ -46,13 +46,14 @@ class WinForms(Form):
 
         self.logger.info("WinForms process terminated")
 
-def initialize(config: Config):
+def initialize(config: Config, workers: int):
     """Starts the application"""
     logger = logging.getLogger("pyeam")
 
-    form = WinForms(config)
+    form = WinForms(config, workers)
     form.Show()
 
     app = Application
     logger.info("Application started")
     app.Run()
+

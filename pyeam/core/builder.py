@@ -36,6 +36,7 @@ class PyeamClientError(Exception):
 class Builder:
     config: Config
     logger = logging.getLogger("pyeam")
+    _workers = 2
 
     @classmethod
     def default(cls):
@@ -52,7 +53,8 @@ class Builder:
             stdout.error(f"{err}")
             sys.exit(1)
     
-    def run(self):
+    @classmethod
+    def run(cls) -> None:
         client_process = None
         
         try:
@@ -65,25 +67,32 @@ class Builder:
             Application.EnableVisualStyles()
             Application.SetCompatibleTextRenderingDefault(False)
 
-            thread = Thread(ThreadStart(lambda: winforms.initialize(self.config)))
+            thread = Thread(ThreadStart(lambda: winforms.initialize(cls.config, cls._workers)))
             thread.SetApartmentState(ApartmentState.STA)
             thread.Start()
             thread.Join()
         except Exception as err:
             stdout.error(f"Failed running builder: {err}")
-            self.logger.critical(f"Failed running builder: {err}")
+            cls.logger.critical(f"Failed running builder: {err}")
         finally:
             if client_process is not None:
                 Builder.kill_processes(client_process.pid)
 
-    def invokers(self, invokers: List[Callable]):
+    @classmethod
+    def invokers(cls, invokers: List[Callable]):
         for invoker in invokers:
             name = invoker.__name__
             if Invoker.commands.get(name):
                 Invoker.commands[name].allowed = True
-                self.logger.info(f"Registering command: `{name}` ")
+                cls.logger.info(f"Registering command: `{name}` ")
                 
         return Builder()
+    
+    @classmethod
+    def workers(self, amount: int) -> "Builder":
+        self.workers = amount
+        return Builder
+
     
     @classmethod
     def kill_processes(cls, parent_pid):
@@ -113,4 +122,4 @@ class Builder:
                     client_online = True
                     cls.logger.info("Returning process")
                     return process
-            sleep(1)
+            sleep(0.25)
