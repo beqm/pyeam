@@ -6,7 +6,7 @@ dependencies = [
     "requests (>=2.32.3,<3.0.0)",
     "questionary (>=2.1.0,<3.0.0)",
 ]
-name = "pyeam"
+name = "nivalis"
 version = "0.1.0"
 description = ""
 authors = [{ name = "beqm", email = "brenomartinsmb@gmail.com" }]
@@ -14,7 +14,7 @@ readme = "README.md"
 requires-python = ">=3.12,<3.14"
 
 [tool.poetry.scripts]
-pyeam = "pyeam.cli:main"
+nivalis = "nivalis.cli:main"
 
 
 [build-system]
