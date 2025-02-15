@@ -69,7 +69,7 @@ class Env:
              json: bool = False, json_fmt: Optional[Dict[str, str]] = None, encoding: str = "utf-8", iso: bool = False):
         
         logger = logging.getLogger(cls.name)
-        file_handler = Env.__get_handler(logging.StreamHandler)
+        file_handler = Env.__get_handler(logging.FileHandler)
 
         iso = iso or cls._iso
         fmt = fmt or cls._fmt or DEFAULT_FMT
