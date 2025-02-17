@@ -16,10 +16,10 @@ class TemplateEnum:
     from nivalis.cli.commands.new.svelte import create_svelte_app
     
     SVELTE = TemplateObj("Svelte", "SVELTE", create_svelte_app, 
-                         dev_url="http://localhost:5173", dist_dir="../dist", 
+                         dev_url="http://localhost:5173", dist_dir="dist", 
                          dev_command=r"{{ manager }} dev", build_command=r"{{ manager }} build")
     REACT = TemplateObj("React", "REACT", create_svelte_app, 
-                        dev_url="http://localhost:3000", dist_dir="../build", 
+                        dev_url="http://localhost:3000", dist_dir="build", 
                         dev_command=r"{{ manager }} dev", build_command=r"{{ manager }} build")
 
 
