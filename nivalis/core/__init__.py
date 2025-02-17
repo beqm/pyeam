@@ -1,8 +1,10 @@
 import os
 import clr
 import pythonnet
+from pathlib import Path
 
-DLL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dlls")
+ROOT_PATH = Path(os.path.dirname(__file__)).resolve().parents[1]
+DLL_PATH = os.path.join(os.path.dirname(__file__), "dlls")
 
 pythonnet.load("coreclr")
 clr.AddReference("System")
