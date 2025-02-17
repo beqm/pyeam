@@ -9,7 +9,6 @@ handler.setFormatter(log.handlers.CustomFormatter(log.DEFAULT_FMT, log.DEFAULT_D
 logger.addHandler(handler)
 logger.propagate = False
 
-
 import os
 import psutil
 import requests
@@ -40,7 +39,12 @@ class Builder:
         try:
             stdout.info("Starting application")
             cls.logger.info(f"Starting builder")
+            
             conf = os.path.join(os.getcwd(), "nivalis.conf.json")
+            
+            if "__compiled__" in globals():
+                from nivalis.core import ROOT_PATH
+                conf = os.path.join(ROOT_PATH, "nivalis.conf.json")
 
             cls.logger.info(f"Loading nivalis.conf.json")
             Builder.config = Config.read(conf, "utf-8")
@@ -53,11 +57,12 @@ class Builder:
         client_process = None
         
         try:
-            client_process = Builder.wait_client()
+            if not "__compiled__" in globals():
+                client_process = Builder.wait_client()
 
-            if not client_process:
-                stdout.error("Failed to start client")
-                raise NivalisClientError("Failed to start client")
+                if not client_process:
+                    stdout.error("Failed to start client")
+                    raise NivalisClientError("Failed to start client")
 
             Application.EnableVisualStyles()
             Application.SetCompatibleTextRenderingDefault(False)
@@ -111,7 +116,6 @@ class Builder:
                         client_online = True
                     return
             except requests.RequestException:
-                cls.logger.info("Status: offline")
                 if not client_online:
                     cls.logger.info("Starting frontend process")
                     process = subprocess.Popen(Builder.config.build.before_dev_command, shell=True, stdout=subprocess.DEVNULL, 
