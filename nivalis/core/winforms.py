@@ -5,7 +5,7 @@ from nivalis.core.config import Config
 
 from System import Func, Type
 from System.Drawing import Size, Icon
-from System.Windows.Forms import Form, Application, FormBorderStyle, OpenFileDialog, DialogResult
+from System.Windows.Forms import Form, Application, FormBorderStyle
 
 
 class WinForms(Form):
