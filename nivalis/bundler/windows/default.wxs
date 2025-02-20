@@ -1,0 +1,132 @@
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product 
+            Id="*" 
+            Name="{{productName}}" 
+            Language="1033" 
+            Version="{{version}}" 
+            Manufacturer="{{manufacturer}}"
+            UpgradeCode="{{guid}}">
+
+    
+        <Package 
+                Id="*"
+                Keywords="Installer"
+                InstallerVersion="500" 
+                Languages="0" 
+                Compressed="yes" 
+                InstallScope="perMachine"/>
+
+
+        <MajorUpgrade DowngradeErrorMessage="Uma versão mais recente do aplicativo já está instalada." />
+        <MediaTemplate />
+
+        <InstallExecuteSequence>
+            <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE</RemoveShortcuts>
+        </InstallExecuteSequence>
+
+        <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER"/>
+
+        <!-- <Icon Id="ProductIcon" SourceFile="{{icon_path}}"/>
+        <Property Id="ARPPRODUCTICON" Value="ProductIcon" /> -->
+
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="DesktopFolder" Name="Desktop" />
+
+            <Directory Id="ProgramFiles64Folder" Name="AppData">
+                <Directory Id="INSTALLFOLDER" Name="{{productName}}">
+
+                    <Component Id="MainExecutable" Guid="*">
+                        <CreateFolder/>
+                        <File Id="Executable" Source="{{binary_path}}" KeyPath="yes" Checksum="yes"/>
+                        <RemoveFolder Id="INSTALLFOLDER" On="uninstall" />
+                    </Component>
+
+                    <Component Id="MainRegistry" Guid="*">
+                        <RegistryValue 
+                            Root="HKLM" 
+                            Key="Software\{{manufacturer}}\{{productName}}" 
+                            Name="InstallPath" 
+                            Type="string" 
+                            Value="[INSTALLFOLDER]" 
+                            KeyPath="yes" 
+                        />
+                    </Component>
+
+                    <Component Id="UninstallShortcutComponent" Guid="*">
+                        <Shortcut 
+                            Id="UninstallShortcut" 
+                            Name="Uninstall.exe" 
+                            Description="Desinstalar {{productName}}"
+                            Target="[System64Folder]msiexec.exe" 
+                            Arguments="/x [ProductCode]"
+                        />
+                        <RegistryValue 
+                            Root="HKLM" 
+                            Key="Software\{{manufacturer}}\{{productName}}" 
+                            Name="UninstallShortcut" 
+                            Type="integer" 
+                            Value="1" 
+                            KeyPath="yes" 
+                        />
+                    </Component>
+
+                </Directory>
+            </Directory>
+        </Directory>
+
+        <DirectoryRef Id="DesktopFolder">
+            <Component Id="DesktopShortcutComponent" Guid="*">
+                <Shortcut 
+                    Id="DesktopShortcut" 
+                    Name="{{productName}}" 
+                    Target="[INSTALLFOLDER]{{executable}}" 
+                    WorkingDirectory="INSTALLFOLDER"
+                />
+                <RegistryValue 
+                    Root="HKCU" 
+                    Key="Software\{{manufacturer}}\{{productName}}" 
+                    Name="DesktopShortcut" 
+                    Type="integer" 
+                    Value="1" 
+                    KeyPath="yes" 
+                />
+            </Component>
+        </DirectoryRef>
+
+        <Feature Id="MainFeature" Title="Main Application" Level="1">
+            <ComponentRef Id="UninstallShortcutComponent" />
+            <ComponentRef Id="MainExecutable" />
+            <ComponentRef Id="MainRegistry" />
+            <ComponentRef Id="DesktopShortcutComponent"/>
+        </Feature>
+
+        <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Run {{productName}}" />
+        <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1"/>
+        <CustomAction Id="LaunchApplication" Impersonate="yes" FileKey="Executable" ExeCommand="[LAUNCHAPPARGS]" Return="asyncNoWait" />
+
+        <UI>
+            <Publish 
+                    Dialog="ExitDialog" 
+                    Control="Finish" 
+                    Event="DoAction" 
+                    Value="LaunchApplication">
+                    WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed
+            </Publish>
+
+            <Publish Dialog="WelcomeDlg"
+                     Control="Next"
+                     Event="NewDialog"
+                     Value="InstallDirDlg"
+                     Order="2">1
+            </Publish>
+            <Publish Dialog="InstallDirDlg"
+                     Control="Back"
+                     Event="NewDialog"
+                     Value="WelcomeDlg"
+                     Order="2">1
+            </Publish>
+        </UI>
+
+        <UIRef Id="WixUI_InstallDir" />
+    </Product>
+</Wix>
