@@ -18,8 +18,11 @@ class TemplateEnum:
                         build_field=BuildField("http://localhost:5173", "dist", r"{{ manager }} dev", r"{{ manager }} build"))
 
 @click.command()
+@click.option('--skip-venv', is_flag=True, help="Skip installing venv")
+@click.option('--skip-pip', is_flag=True, help="Skip installing pip")
+@click.option('--skip-node', is_flag=True, help="Skip node install")
 @click.argument("name", required=False)
-def new(name: str = None):
+def new(skip_venv, skip_pip, skip_node, name: str = None):
     """Creates a new project
 
     name: The name of the project. If not provided, you will be asked to enter one.
@@ -40,30 +43,34 @@ def new(name: str = None):
             if stop:
                 stdout.error("Operation cancelled by user.", exit=True)
 
-    manager: PackageManager = utils.prompt_select(title="Choose the package manager", choices=[questionary.Choice(title="npm", value=PackageManagerEnum.NPM),
-        questionary.Choice(title="pnpm", value=PackageManagerEnum.PNPM)])
+    if not manager:
+        manager: PackageManager = utils.prompt_select(title="Choose the package manager", choices=[questionary.Choice(title="npm", value=PackageManagerEnum.NPM),
+            questionary.Choice(title="pnpm", value=PackageManagerEnum.PNPM)])
 
     scaffold_template(manager, name)
 
-    if not os.path.exists(os.path.join(FULL_PATH, ".venv")):
-        venv: bool = utils.prompt_select(title="Would you like to set up venv?", choices=[questionary.Choice(title="Yes", value=True),
+    if not skip_venv:
+        if not os.path.exists(os.path.join(FULL_PATH, ".venv")):
+            venv: bool = utils.prompt_select(title="Would you like to set up venv?", choices=[questionary.Choice(title="Yes", value=True),
+                questionary.Choice(title="No", value=False)])
+            
+            if venv:
+                utils.setup_venv(name)
+    
+    if not skip_pip:
+        pip: bool = utils.prompt_select(title="Would you like to run pip install?", choices=[questionary.Choice(title="Yes", value=True),
             questionary.Choice(title="No", value=False)])
+
+        if pip:
+            utils.run_pip_install(name, venv)
+
+    if not skip_node:
+        if not os.path.exists(os.path.join(name, "node_modules")):
+            node_modules = utils.prompt_select(title=f"Would you like to run {manager.cli} install?", choices=[questionary.Choice(title="Yes", value=True),
+                questionary.Choice(title="No", value=False)])
         
-        if venv:
-            utils.setup_venv(name)
-    
-    pip: bool = utils.prompt_select(title="Would you like to run pip install?", choices=[questionary.Choice(title="Yes", value=True),
-        questionary.Choice(title="No", value=False)])
-
-    if pip:
-        utils.run_pip_install(name, venv)
-
-    if not os.path.exists(os.path.join(name, "node_modules")):
-        node_modules = utils.prompt_select(title=f"Would you like to run {manager.cli} install?", choices=[questionary.Choice(title="Yes", value=True),
-            questionary.Choice(title="No", value=False)])
-    
-        if node_modules:
-            utils.run_npm_install(name, manager)
+            if node_modules:
+                utils.run_npm_install(name, manager)
 
     stdout.info("Project setup completed successfully!")
 

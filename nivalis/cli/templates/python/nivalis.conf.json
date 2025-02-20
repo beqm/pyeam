@@ -2,7 +2,7 @@
     "productName": "{{ project_name }}",
     "version": "0.1.0",
     "identifier": "com.nivalis.app",
-    "icon": "",
+    "icon": "./icons/icon.ico",
     "devTools": true,
     "contextMenu": true,
     "build": {

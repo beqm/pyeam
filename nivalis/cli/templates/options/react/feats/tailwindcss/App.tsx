@@ -13,7 +13,7 @@ function App() {
 
     return (
         <main className="relative flex h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-blue-200 to-white text-center font-sans">
-            
+            <img src="/logo.svg" class="w-32 h-32 mb-10" alt=""/>
             <h1 className="text-4xl text-[#4a5063]">Nivalis</h1>
             <div className="mt-5 flex gap-4">
                 <input

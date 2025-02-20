@@ -10,6 +10,7 @@
 </script>
 
 <main>
+    <img src="/logo.svg" class="logo" alt="">
     <h1>Nivalis</h1>
     <div class="input-container">
         <input

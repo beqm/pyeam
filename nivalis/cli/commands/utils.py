@@ -6,9 +6,11 @@ import subprocess
 import questionary
 import importlib.util
 from typing import List
+from pathlib import Path
 from nivalis.tools import stdout
 from nivalis.cli.commands.models import PackageManager, TemplateObj
-from jinja2 import Template
+
+
 def prompt_text(title: str, default):
     value = questionary.text(title, default=default).ask()
 
@@ -66,17 +68,10 @@ def resolve_conf_file(manager: PackageManager, template: TemplateObj, path: str)
         json.dump(config, file, indent=4)
 
 def scaffold_python(manager: PackageManager, path: str, template: TemplateObj):
-    templates_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates", "python")
+    PYTHON_TEMPLATE_DIR = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) / "templates" / "python"
 
-    os.makedirs(os.path.join(path, "src-python"), exist_ok=True)
-    
-    src_main = os.path.join(templates_dir, "main.py")
-    dst_main = os.path.join(path, "src-python", "main.py")
-    shutil.copy2(src_main, dst_main)
-
-    src_json = os.path.join(templates_dir, "nivalis.conf.json")
-    dst_json = os.path.join(path, "src-python", "nivalis.conf.json")
-    shutil.copy2(src_json, dst_json)
+    src_path = Path(path).resolve() / "src-python"
+    shutil.copytree(PYTHON_TEMPLATE_DIR, src_path, dirs_exist_ok=True)
 
     resolve_conf_file(manager, template, path)
 
@@ -137,13 +132,3 @@ def get_package_path(package_name):
 def is_venv():
     return (hasattr(sys, 'real_prefix') or
             (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix))
-
-def process_prettier_config(filepath: str, features: list):
-	with open(filepath, 'r', encoding='utf-8') as file:
-		template_content = file.read()
-
-	template = Template(template_content)
-	rendered_content = template.render(features=features)
-
-	with open(filepath, 'w', encoding='utf-8') as file:
-		file.write(rendered_content)

@@ -15,6 +15,7 @@ function App() {
 
     return (
         <main>
+            <img src="/logo.svg" className="logo" alt=""></img>
             <h1>Nivalis</h1>
             <div className="input-container">
                 <input

@@ -11,6 +11,12 @@ main {
     overflow: hidden;
 }
 
+.logo {
+    width: 128px;
+    height: 128px;
+    margin-bottom: 40px;
+}
+
 h1 {
     font-size: 2.5rem;
     color: #4a5063;
