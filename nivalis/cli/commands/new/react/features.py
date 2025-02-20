@@ -1,4 +1,3 @@
-import os
 import json
 import shutil
 from pathlib import Path
@@ -13,24 +12,25 @@ BASE_PRETTIER_DIR = Path(TEMPLATE_DIR) / "feats" / "prettier"
 
 class FeaturesEnum:
     PRETTIER = DependencyObj(title="Prettier (Code formatter)", value="PRETTIER", 
-                            packages={"prettier": "^3.4.2",
-                                    "prettier-plugin-svelte": "^3.3.3",
-                                    "prettier-plugin-tailwindcss": "^0.6.11",}, 
-                            extras={})
+                             packages={
+                                "prettier": "^3.4.2",
+                                }, extras={})
     
 
     ESLINT = DependencyObj(title="ESLint (Code Linter)", value="ESLINT", 
-                           packages={"@eslint/compat": "^1.2.5",
-                            "@eslint/js": "^9.18.0", "eslint": "^9.18.0",
-                            "eslint-config-prettier": "^10.0.1",
-                            "eslint-plugin-svelte": "^2.46.1",},
-                            extras={})
+                           packages={
+                                    "eslint": "^9.19.0",
+                                    "eslint-plugin-react": "^7.37.4",
+                                    "eslint-plugin-react-hooks": "^5.0.0",
+                                    "eslint-plugin-react-refresh": "^0.4.18",
+                                }, extras={})
     
 
     TAILWINDCSS = DependencyObj(title="Tailwindcss", value="TAILWINDCSS", 
                                 packages={"tailwindcss": "^4.0.0", "@tailwindcss/vite": "^4.0.0",}, 
                                 extras={"prettier": "prettier-plugin-tailwindcss"})
-    
+
+
 def resolve(name: str, typecheck: DependencyObj, features: List[DependencyObj]):
     use_tailwind = any(feature.value == FeaturesEnum.TAILWINDCSS.value for feature in features)
     use_eslint = any(feature.value == FeaturesEnum.ESLINT.value for feature in features)
@@ -43,13 +43,15 @@ def resolve(name: str, typecheck: DependencyObj, features: List[DependencyObj]):
     path = Path(name).resolve()
 
     if use_tailwind:
+        ext_name = "tsx" if typecheck.value == "ts" else "jsx"
+
         dependencies.update(FeaturesEnum.TAILWINDCSS.packages)
         filepaths.update({
             "tailwind.config": FeaturePath(BASE_TAILWIND_DIR / "tailwind.config.js", Path(path) / "tailwind.config.js"),
-            "+page.svelte": FeaturePath(BASE_TAILWIND_DIR / "+page.svelte", Path(path) / "src" / "routes" / "+page.svelte"),
+            "index.css": FeaturePath(BASE_TAILWIND_DIR / "index.css", Path(path) / "src" / "index.css"),
             "vite.config.js": FeaturePath(BASE_TAILWIND_DIR / "vite.config.js", Path(path) / f"vite.config.{typecheck.value}"),
-            "app.css": FeaturePath(BASE_TAILWIND_DIR / "app.css", Path(path) / "src" / "app.css"),
-            ".prettierrc": FeaturePath(BASE_TAILWIND_DIR / ".prettierrc", Path(path) / ".prettierrc"),
+            "App.css": FeaturePath(BASE_TAILWIND_DIR / "App.css", Path(path) / "src" / "App.css"),
+            "App.tsx": FeaturePath(BASE_TAILWIND_DIR / "App.tsx", Path(path) / "src" / f"App.{ext_name}"),
         })
 
     if use_eslint:
@@ -85,6 +87,7 @@ def resolve(name: str, typecheck: DependencyObj, features: List[DependencyObj]):
 
     with open(json_path, 'w') as file:
         json.dump(config, file, indent=2)
+
 
 def resolve_prettier_file(path: FeaturePath, tailwind: bool):
 	with open(path.dst, 'r', encoding='utf-8') as file:

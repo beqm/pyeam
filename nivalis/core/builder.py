@@ -1,22 +1,11 @@
-
-import logging
-from nivalis.tools import log
-
-logger = log.get(log.LIB_LOGGER)
-logger.setLevel(logging.NOTSET)
-handler = logging.StreamHandler()
-handler.setFormatter(log.handlers.CustomFormatter(log.DEFAULT_FMT, log.DEFAULT_DATEFMT, colored=True, iso=True))
-logger.addHandler(handler)
-logger.propagate = False
-
 import os
 import psutil
 import requests
 import subprocess
 from time import sleep
-from nivalis.tools import stdout
 from nivalis.core import winforms
 from typing import Callable, List
+from nivalis.tools import stdout, log
 from nivalis.core.config import Config
 from nivalis.core.invoker import Invoker
 

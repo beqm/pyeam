@@ -1,27 +1,45 @@
-from typing import Callable
+from pathlib import Path
 from dataclasses import dataclass
+from typing import Callable, Dict, Any
+
+
+@dataclass
+class BuildField:
+    dev_url: str
+    dist_dir: str
+    dev_command: str
+    build_command: str
+
+    def to_dict(self):
+        return {
+            "devUrl": self.dev_url,
+            "distDir": self.dist_dir,
+            "beforeBuildCommand": self.build_command,
+            "beforeDevCommand": self.dev_command,
+        }
 
 
 @dataclass
 class TemplateObj:
     title: str
     value: str
-    func: Callable
-    dev_url: str
-    dist_dir: str
-    dev_command: str
-    build_command: str
+    create: Callable
+    build_field: BuildField
 
-class TemplateEnum:
-    from nivalis.cli.commands.new.svelte import create_svelte_app
-    
-    SVELTE = TemplateObj("Svelte", "SVELTE", create_svelte_app, 
-                         dev_url="http://localhost:5173", dist_dir="dist", 
-                         dev_command=r"{{ manager }} dev", build_command=r"{{ manager }} build")
-    REACT = TemplateObj("React", "REACT", create_svelte_app, 
-                        dev_url="http://localhost:3000", dist_dir="build", 
-                        dev_command=r"{{ manager }} dev", build_command=r"{{ manager }} build")
 
+@dataclass
+class FeaturePath:
+    src: Path
+    dst: Path
+
+
+@dataclass
+class DependencyObj:
+    title: str
+    value: str
+    packages: Dict[str, str]
+    extras: Dict[str, Any]
+ 
 
 @dataclass
 class PackageManager:
@@ -31,3 +49,4 @@ class PackageManager:
 class PackageManagerEnum:
     NPM = PackageManager(execute="npm run", cli="npm")
     PNPM = PackageManager(execute="pnpm", cli="npm")
+    

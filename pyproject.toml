@@ -6,6 +6,7 @@ dependencies = [
     "requests (>=2.32.3,<3.0.0)",
     "questionary (>=2.1.0,<3.0.0)",
     "nuitka (>=2.6.6,<3.0.0)",
+    "jinja2 (>=3.1.5,<4.0.0)",
 ]
 name = "nivalis"
 version = "0.1.0"

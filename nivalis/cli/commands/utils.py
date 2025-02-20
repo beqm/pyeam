@@ -4,10 +4,11 @@ import json
 import shutil
 import subprocess
 import questionary
+import importlib.util
 from typing import List
 from nivalis.tools import stdout
-from nivalis.cli.commands.models import PackageManager, TemplateEnum
-
+from nivalis.cli.commands.models import PackageManager, TemplateObj
+from jinja2 import Template
 def prompt_text(title: str, default):
     value = questionary.text(title, default=default).ask()
 
@@ -43,7 +44,7 @@ def prompt_checkbox(title: str, choices: List[questionary.Choice]):
     return value
 
 
-def resolve_conf_file(manager: PackageManager, template: TemplateEnum, path: str):
+def resolve_conf_file(manager: PackageManager, template: TemplateObj, path: str):
     dst_json = os.path.join(path, "src-python", "nivalis.conf.json")
     
     with open(dst_json, 'r') as file:
@@ -56,22 +57,15 @@ def resolve_conf_file(manager: PackageManager, template: TemplateEnum, path: str
     config["productName"] = name
     config["window"]["title"] = name
 
-    match template:
-        case TemplateEnum.SVELTE.value:
-            config["build"]["beforeBuildCommand"] = TemplateEnum.SVELTE.build_command.replace(r"{{ manager }}", f"{manager.execute}")
-            config["build"]["beforeDevCommand"] = TemplateEnum.SVELTE.dev_command.replace(r"{{ manager }}", f"{manager.execute}")
-            config["build"]["devUrl"] = TemplateEnum.SVELTE.dev_url
-            config["build"]["distDir"] = TemplateEnum.SVELTE.dist_dir
-        case TemplateEnum.REACT.value:
-            config["build"]["beforeBuildCommand"] = TemplateEnum.REACT.build_command.replace(r"{{ manager }}", f"{manager.execute}")
-            config["build"]["beforeDevCommand"] = TemplateEnum.REACT.dev_command.replace(r"{{ manager }}", f"{manager.execute}")
-            config["build"]["devUrl"] = TemplateEnum.REACT.dev_url
-            config["build"]["distDir"] = TemplateEnum.REACT.dist_dir
+    config["build"] = template.build_field.to_dict()
+
+    for key in config["build"]:
+        config["build"][key] = config["build"][key].replace(r"{{ manager }}", f"{manager.execute}")
     
     with open(dst_json, 'w') as file:
         json.dump(config, file, indent=4)
 
-def scaffold_python(manager: PackageManager, path: str, template: TemplateEnum):
+def scaffold_python(manager: PackageManager, path: str, template: TemplateObj):
     templates_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates", "python")
 
     os.makedirs(os.path.join(path, "src-python"), exist_ok=True)
@@ -86,16 +80,22 @@ def scaffold_python(manager: PackageManager, path: str, template: TemplateEnum):
 
     resolve_conf_file(manager, template, path)
 
-
-def is_npm_installed():
+def is_cli_installed(name: str, arg="-v") -> bool:
     try:
-        subprocess.run(['npm', '-v'], capture_output=True, text=True, check=True, shell=True)
+        subprocess.run([name, arg], capture_output=True, text=True, check=True, shell=True)
         return True
     except subprocess.CalledProcessError:
         return False
     except FileNotFoundError:
         return False
-    
+
+
+def create_git_repo(path: str):
+    try:
+        subprocess.run(['git', 'init'], cwd=path, check=True)
+        stdout.info("Git repository initialized in output directory.")
+    except subprocess.CalledProcessError as err:
+        stdout.error(f"Failed to initialize Git: {err}", exit=True)
 
 def write_requirements(path: str):
     try:
@@ -129,3 +129,21 @@ def run_npm_install(path: str, manager: PackageManager):
     stdout.info(f"Running {manager.cli} install")
     subprocess.run([manager.cli, "install"], cwd=path, check=True, shell=True)
     stdout.info("Node dependencies installed successfully.")
+
+def get_package_path(package_name):
+    package_spec = importlib.util.find_spec(package_name)
+    return os.path.dirname(package_spec.origin)
+
+def is_venv():
+    return (hasattr(sys, 'real_prefix') or
+            (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix))
+
+def process_prettier_config(filepath: str, features: list):
+	with open(filepath, 'r', encoding='utf-8') as file:
+		template_content = file.read()
+
+	template = Template(template_content)
+	rendered_content = template.render(features=features)
+
+	with open(filepath, 'w', encoding='utf-8') as file:
+		file.write(rendered_content)

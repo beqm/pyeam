@@ -7,7 +7,9 @@ from nivalis.tools import stdout
 
 @click.command()
 def run():
-    
+    """Runs the project for development
+    """
+
     run_application()
 
     os.chdir("src-python")

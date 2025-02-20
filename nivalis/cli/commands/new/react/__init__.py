@@ -5,9 +5,9 @@ from typing import List
 from pathlib import Path
 from ...models import DependencyObj
 
-TEMPLATE_DIR = os.path.join(Path(__file__).resolve().parents[3], "templates", "options", "svelte")
+TEMPLATE_DIR = os.path.join(Path(__file__).resolve().parents[3], "templates", "options", "react")
 
-def create_svelte_app(path: str):
+def create_react_app(path: str):
     from . import features, typecheck
     from nivalis.cli.commands.utils import prompt_select, prompt_checkbox
     
@@ -18,8 +18,8 @@ def create_svelte_app(path: str):
         questionary.Choice(title=option.title, value=option)
         for option in features.FeaturesEnum.__dict__.values()
         if isinstance(option, DependencyObj)
-        ])
-    
+    ])
+
     src_path = Path(TEMPLATE_DIR) / "base"
     dst_path = Path(os.getcwd()) / path
 
