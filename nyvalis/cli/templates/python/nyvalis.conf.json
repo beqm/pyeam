@@ -1,0 +1,22 @@
+{
+    "productName": "{{ project_name }}",
+    "version": "{{ version }}",
+    "identifier": "{{ identifier}}",
+    "icon": "./icons/icon.ico",
+    "devTools": true,
+    "contextMenu": true,
+    "build": {
+        "beforeBuildCommand": "",
+        "beforeDevCommand": "",
+        "devUrl": "",
+        "distDir": ""
+    },
+    "window": {
+        "title": "{{ project_name }}",
+        "resizable": true,
+        "width": 1024,
+        "height": 728,
+        "minWidth": 800,
+        "minHeight": 600
+    }
+}

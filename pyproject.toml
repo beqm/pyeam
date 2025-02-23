@@ -8,7 +8,7 @@ dependencies = [
     "nuitka (>=2.6.6,<3.0.0)",
     "jinja2 (>=3.1.5,<4.0.0)",
 ]
-name = "nivalis"
+name = "nyvalis"
 version = "0.1.0"
 description = ""
 authors = [{ name = "beqm", email = "brenomartinsmb@gmail.com" }]
@@ -16,7 +16,7 @@ readme = "README.md"
 requires-python = ">=3.12,<3.14"
 
 [tool.poetry.scripts]
-nivalis = "nivalis.cli:main"
+nyvalis = "nyvalis.cli:main"
 
 
 [build-system]
