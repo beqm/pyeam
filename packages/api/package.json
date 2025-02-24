@@ -6,7 +6,7 @@
   "keywords": ["nyvalis", "api", "communication"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/beqm/nyvalis.git"
+    "url": "git+https://github.com/beqm/nyvalis.git"
   },
   "main": "index.js",
   "scripts": {
