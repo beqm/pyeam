@@ -10,7 +10,7 @@ dependencies = [
 ]
 name = "nyvalis"
 version = "0.1.0"
-description = ""
+description = "Nyvalis is a lightweight Python library for building modern desktop applications using web technologies and webview."
 authors = [{ name = "beqm", email = "brenomartinsmb@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
