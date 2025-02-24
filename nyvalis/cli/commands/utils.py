@@ -7,6 +7,7 @@ import questionary
 import importlib.util
 from typing import List
 from pathlib import Path
+import importlib.metadata
 from nyvalis.tools import stdout, log
 from nyvalis.core import CONF_FILENAME, LIB_NAME
 from nyvalis.cli.commands.models import PackageManager, TemplateObj
@@ -106,7 +107,7 @@ def create_git_repo(path: str):
 def write_requirements(path: str):
     try:
         with open(f"{path}/requirements.txt", "w") as file:
-            file.write(f"{LIB_NAME}==0.1.0")
+            file.write(f"{LIB_NAME}=={importlib.metadata.version(LIB_NAME)}")
         log.info("Sucessfully created requirements.txt")
     except Exception as err:
         log.error(f"Failed to write requirements.txt: {err}")
