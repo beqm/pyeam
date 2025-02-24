@@ -1,0 +1,10 @@
+{
+    "name": "nyvalis",
+    "version": "0.1.0",
+    "description": "Scripts for using poetry faster",
+    "scripts": {
+      "build": "poetry build",
+      "publish": "poetry publish --build --username %PYPI_USERNAME% --password %PYPI_PASSWORD%"
+    }
+  }
+  
