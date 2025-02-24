@@ -1,5 +1,5 @@
 import "./App.css";
-import { invoke } from "./lib/api.js";
+import { invoke } from '@nyvalis/api';
 import React, { useState } from "react";
 
 function App() {

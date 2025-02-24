@@ -1,0 +1,17 @@
+{
+  "name": "@nyvalis/api",
+  "version": "0.1.0",
+  "author": "brenomartinsmb@gmail.com",
+  "description": "Facilitate communication with nyvalis core",
+  "keywords": ["nyvalis", "api", "communication"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beqm/nyvalis.git"
+  },
+  "main": "index.js",
+  "scripts": {
+    "pack": "npm pack --pack-destination ./dist/",
+    "publish": "npm publish --access public"
+  },
+  "types": "./index.d.ts"
+}

@@ -1,5 +1,5 @@
 <script>
-    import { invoke } from "$lib/api.js";
+    import { invoke } from '@nyvalis/api';
 
     let name = "";
     let message = "";

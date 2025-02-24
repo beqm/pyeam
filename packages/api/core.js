@@ -2,7 +2,6 @@
 const pendingResponses = {};
 
 
-
 if (typeof window !== 'undefined' && window.chrome?.webview) {
     Object.defineProperty(window, 'nyvalis', {
         value: window.chrome.webview,
@@ -13,10 +12,9 @@ if (typeof window !== 'undefined' && window.chrome?.webview) {
 
 }
 
-
 function initializeWebViewListener() {
     if (!window.nyvalis) {
-        console.warn("WebView não encontrado");
+        console.warn("WebView not found");
         return;
     }
 
