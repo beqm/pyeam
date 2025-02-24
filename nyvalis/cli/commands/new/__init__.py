@@ -51,12 +51,12 @@ def new(verbose, skip_venv, skip_pip, skip_node, name: str = None):
                 logger.info(f"Operation cancelled by user.")
                 stdout.error("Operation cancelled by user.", exit=True)
 
-    if not manager:
-        manager: PackageManager = utils.prompt_select(title="Choose the package manager", choices=[questionary.Choice(title="npm", value=PackageManagerEnum.NPM),
-            questionary.Choice(title="pnpm", value=PackageManagerEnum.PNPM)])
+    manager: PackageManager = utils.prompt_select(title="Choose the package manager", choices=[questionary.Choice(title="npm", value=PackageManagerEnum.NPM),
+        questionary.Choice(title="pnpm", value=PackageManagerEnum.PNPM)])
 
     scaffold_template(manager, name)
 
+    venv = False
     if not skip_venv:
         if not os.path.exists(os.path.join(FULL_PATH, ".venv")):
             venv: bool = utils.prompt_select(title="Would you like to set up venv?", choices=[questionary.Choice(title="Yes", value=True),
@@ -64,6 +64,7 @@ def new(verbose, skip_venv, skip_pip, skip_node, name: str = None):
             
             if venv:
                 utils.setup_venv(name)
+
     
     if not skip_pip:
         pip: bool = utils.prompt_select(title="Would you like to run pip install?", choices=[questionary.Choice(title="Yes", value=True),
